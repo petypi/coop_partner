@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--partner.territory: form-->
+        <record id="res_partner_territory_view_form" model="ir.ui.view">
+            <field name="name">res.partner.territory.form</field>
+            <field name="model">res.partner.territory</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="Create Territory" class="oe_edit_only"/>
+                            <h1><field name="name" placeholder="Enter territory name"/></h1>
+                        </div>
+                        <group name="first" col="1" string="">
+                            <field name="parent_id" placeholder="Choose parent"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--partner.territory: tree-->
+        <record id="res_partner_territory_view_tree" model="ir.ui.view">
+            <field name="name">res.partner.territory.tree</field>
+            <field name="model">res.partner.territory</field>
+            <field name="arch" type="xml">
+                <tree string="Partner Territories">
+                    <field name="display_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--partner.territory: action-->
+        <record model="ir.actions.act_window" id="action_res_partner_territory">
+            <field name="name">Territories</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.territory</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="res_partner_territory_view_tree"/>
+        </record>
+
+        <!--partner.territory: menu-->
+        <menuitem id="menu_res_partner_location_config"
+                  parent="sale.menu_sale_config"
+                  sequence="10"
+                  name="Partner Location Configuration"/>
+        <menuitem id="menu_res_partner_territory"
+                  parent="menu_res_partner_location_config"
+                  action="action_res_partner_territory"
+                  sequence="1"
+                  name="Partner Territories"/>
+
+    </data>
+</odoo>

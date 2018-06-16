@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Language -->
+        <record id="lang_sw" model="res.lang">
+            <field name="name">Swahili / Kiswahili</field>
+            <field name="code">sw</field>
+            <field name="date_format">%m/%d/%Y</field>
+            <field name="direction">ltr</field>
+            <field name="thousands_sep">,</field>
+            <field name="translatable" eval="True"/>
+            <field name="time_format">%H:%M:%S</field>
+            <field name="decimal_point">.</field>
+            <field name="active" eval="True"/>
+            <field name="iso_code">sw</field>
+            <field name="grouping">[3,0]</field>
+        </record>
+
+        <!-- Agent Type -->
+        <record model="agent.type" id="conf_t_chama">
+            <field name="name">Chama</field>
+        </record>
+
+        <record model="agent.type" id="conf_t_field">
+            <field name="name">Field</field>
+        </record>
+
+        <record model="agent.type" id="conf_t_institution">
+            <field name="name">Institution</field>
+            <field name="default_sla_days">3</field>
+        </record>
+
+        <record model="agent.type" id="conf_t_tbc">
+            <field name="name">TBCs</field>
+        </record>
+
+        <!-- Partner Business Type -->
+        <record id="business_type_id1" model="res.partner.business.type">
+            <field name="name">Salon</field>
+        </record>
+
+        <record id="business_type_id2" model="res.partner.business.type">
+            <field name="name">Barber</field>
+        </record>
+
+        <record id="business_type_id3" model="res.partner.business.type">
+            <field name="name">MPESA Store</field>
+        </record>
+
+        <record id="business_type_id4" model="res.partner.business.type">
+            <field name="name">General Shop</field>
+        </record>
+
+        <!-- Partner Data Social Media -->
+        <record id="social_media_id1" model="res.partner.data.social.media">
+            <field name="name">Whatsapp</field>
+        </record>
+
+        <record id="social_media_id2" model="res.partner.data.social.media">
+            <field name="name">Facebook</field>
+        </record>
+
+        <record id="social_media_id3" model="res.partner.data.social.media">
+            <field name="name">Instagram</field>
+        </record>
+
+        <record id="social_media_id4" model="res.partner.data.social.media">
+            <field name="name">Twitter</field>
+        </record>
+
+        <!-- Partner Location Type -->
+        <record id="location_type_id1" model="res.partner.location.type">
+            <field name="name">Rural</field>
+        </record>
+
+        <record id="location_type_id2" model="res.partner.location.type">
+            <field name="name">Urban</field>
+        </record>
+
+        <record id="location_type_id3" model="res.partner.location.type">
+            <field name="name">Peri Urban</field>
+        </record>
+
+        <!-- Agent Type/Partner Type : mail.message.subtype -->
+        <record id="mt_customer_to_agent" model="mail.message.subtype">
+            <field name="name">Customer to Agent</field>
+            <field name="res_model">res.partner</field>
+            <field name="default" eval="True"/>
+            <field name="description">Customer Became an Agent</field>
+        </record>
+
+    </data>
+</openerp>

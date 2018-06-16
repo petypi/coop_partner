@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--partner.location.type: form-->
+        <record id="res_partner_location_type_view_form" model="ir.ui.view">
+            <field name="name">res.partner.location.type.form</field>
+            <field name="model">res.partner.location.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group name="group_top">
+                         <group name="group_left">
+                             <field name="name" string="Location Type" placeholder="Enter location type name"/>
+                         </group>
+                     </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--partner.location.type: tree-->
+        <record id="res_partner_location_type_view_tree" model="ir.ui.view">
+            <field name="name">res.partner.location.type.tree</field>
+            <field name="model">res.partner.location.type</field>
+            <field name="arch" type="xml">
+                <tree string="Partner Location Types">
+                    <field name="display_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--partner.location.type: action-->
+        <record model="ir.actions.act_window" id="action_res_partner_location_type">
+            <field name="name">Location Types</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.location.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="res_partner_location_type_view_tree"/>
+        </record>
+
+        <!--partner.location.type: menu-->
+        <menuitem id="menu_res_partner_location_type"
+                  parent="menu_res_partner_location_config"
+                  action="action_res_partner_location_type"
+                  sequence="1"
+                  name="Partner Location Types"/>
+
+    </data>
+</odoo>

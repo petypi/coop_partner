@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--res.partner: kanban-->
+        <record model="ir.ui.view" id="res_partner_kanban_view_extended">
+            <field name="name">res.partner.kanban.extended</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+            <field name="arch" type="xml">
+
+                <!--changes-->
+                <xpath expr="//div[@class='oe_kanban_details']" position="replace">
+                    <div class="oe_kanban_details">
+                        <strong class="oe_partner_heading">
+                            <field name="display_name"/>
+                        </strong>
+                        <ul>
+                            <li t-if="record.parent_id.raw_value and !record.function.raw_value">
+                                <field name="parent_id"/>
+                            </li>
+                            <li t-if="record.phone.raw_value">
+                                <field name="phone"/>
+                                (phone)
+                            </li>
+                            <li t-if="record.mobile.raw_value">
+                                <field name="mobile"/>
+                                (mobile)
+                            </li>
+                            <li t-if="record.street.raw_value and record.street2.raw_value and record.city.raw_value">
+                                <field name="street"/>
+                                <field name="street2"/>,
+                                <field name="city"/>
+                            </li>
+                        </ul>
+                        <div class="oe_kanban_partner_links"/>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!--res.partner: form-->
+        <record id="res_partner_view_form_extended" model="ir.ui.view">
+            <field name="name">res.partner.view.form.extended</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='parent_id']" position="replace">
+                    <field name="parent_id" options="{'no_create': true}"/>
+                </xpath>
+
+
+                <!--agent fields-->
+                <label for="street" position="before">
+                    <field name="partner_type"
+                           options="{'horizontal': true}"
+                           attrs="{'invisible': ['|', ('company_type','!=','person'), ('supplier','=', True)],
+                                   'required':[('supplier','!=', True)]}"/>
+                    <field name="is_sale_associate" invisible="1"/>
+                    <field name="is_agent" invisible="1"/>
+                    <field name="can_purchase"
+                           attrs="{'invisible':[('is_agent', '=', False)]}"/>
+                    <field name="agent_type_id"
+                           attrs="{'invisible':[('is_agent', '=', False)],'required':[('is_agent', '=', True)]}"
+                           view_type="selection"
+                           options="{'no_create': true}"/>
+                </label>
+
+
+                <!--phone-->
+                <xpath expr="//field[@name='phone']" position="attributes">
+                    <attribute name="required">True</attribute>
+                    <attribute name="placeholder">+2547xxxxxxxx</attribute>
+                </xpath>
+
+
+                <!--replace archive button-->
+                <button name="toggle_active" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </button>
+
+                <button name="toggle_active" position="after">
+                    <button name="action_toggle_active_agent" type="object"
+                            attrs="{'invisible': [('is_agent', '=', False)]}"
+                            class="oe_stat_button" icon="fa-archive" groups="sales_team.group_sale_manager">
+                        <field name="active_agent" widget="boolean_button"
+                               options="{
+                                    'terminology': {
+                                        'string_true': 'Active Agent',
+                                        'hover_true': 'Deactivate Agent',
+                                        'string_false': 'Deactivated Agent',
+                                        'hover_false': 'Activate Agent'
+                                    }
+                                }"/>
+                    </button>
+                </button>
+
+                <!--button_box-->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_inline oe_stat_button" name="get_partner_data"
+                            string="Partner Data"
+                            type="object" icon="fa-users"/>
+                    <field string="Partner Data" name="has_partner_data" widget="statinfo" invisible="True"/>
+                    <button class="oe_inline oe_stat_button" name="action_view_sms"
+                            type="object" icon="fa-envelope">
+                        <field name="sms_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+
+                <!--hide contacts page-->
+                <xpath expr="//field[@name='child_ids']/parent::node()" position="replace">
+                </xpath>
+
+                <!--change company_type-->
+                <field name="company_type" position="replace">
+                    <field name="company_type" options="{'horizontal': true}" widget="radio"/>
+                </field>
+
+                <!--change mobile-->
+                <field name="mobile" position="replace">
+                    <field name="mobile" placeholder="+2547xxxxxxxxx"/>
+                </field>
+
+                <!--change street-->
+                <field name="street" position="replace">
+                    <field name="street" placeholder="P.O Box..." class="o_address_street"/>
+                </field>
+
+                <!--change street2-->
+                <field name="street2" position="replace">
+                    <field name="street2" placeholder="Postal Code" class="o_address_street"/>
+                </field>
+
+                <!--change country_id-->
+                <field name="country_id" position="replace">
+                    <field name="country_id" placeholder="Country" class="o_address_country"
+                           options='{"no_open": True, "no_create": True}'/>
+                </field>
+
+                <!--change city-->
+                <field name="city" position="replace">
+                    <field name="city" placeholder="City or Town" class="o_address_city"/>
+                </field>
+
+                <!--remove function-->
+                <field name="function" position="replace">
+                    <field name="function" invisible="True"/>
+                </field>
+
+                <!--remove title-->
+                <field name="title" position="replace">
+                    <field name="title" invisible="True"/>
+                </field>
+
+                <!--remove state-->
+                <field name="state_id" position="replace">
+                    <field name="state_id" invisible="True"/>
+                </field>
+
+                <!--remove zip-->
+                <field name="zip" position="replace">
+                    <field name="zip" invisible="True"/>
+                </field>
+
+                <!--remove website-->
+                <field name="website" position="replace">
+                    <field name="website" invisible="True"/>
+                </field>
+
+                <!-- replace user_id(Sales Person) -->
+                <field name="user_id" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
+
+                <field name="user_id" position="after">
+                    <field name="sale_associate_id" options="{'no_create': True, 'no_open': True}"
+                           domain="[('partner_type', '=', 'associate')]" string="Sales Associate"
+                           attrs="{'invisible': [('is_agent', '=', False)],'required': [('can_purchase','=',True),('partner_type','=','agent')] }"/>
+                </field>
+
+                <!--change comment section-->
+                <field name="comment" position="attributes">
+                    <attribute name="placeholder">Agent Notes...</attribute>
+                    <attribute name="string">Agent Notes</attribute>
+                </field>
+
+                <!-- hide customer and supplier -->
+                <field name="customer" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('partner_type',
+                        '=',
+                        'associate'), ('supplier','=', True) ]}
+                    </attribute>
+                    <attribute name="readonly">True</attribute>
+                </field>
+
+                <field name="customer" position="after">
+                    <field name="agent_id"
+                           attrs="{'readonly': [('customer', '=', False)], 'invisible': ['|', ('partner_type', '=',
+                        'associate') , ('supplier','=', True) ]}"/>
+                </field>
+
+                <field name="supplier" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('partner_type', '=', 'agent') , ('partner_type', '=',
+                        'associate') ]}
+                    </attribute>
+                </field>
+
+                <!-- Change comment attrs and page string -->
+                <page name="internal_notes" position="attributes">
+                    <attribute name="string">Notes</attribute>
+                    <!--<attribute name="invisible">{'invisible': [('is_sale_associate', '=', True)]}</attribute>-->
+                </page>
+
+                <!--<page name="sales_purchases" position="attributes">-->
+                <!--<attribute name="invisible">{'invisible': [('is_sale_associate', '=', True)]}</attribute>-->
+                <!--</page>-->
+
+                <!--<page name="accounting" position="attributes">-->
+                <!--<attribute name="invisible">{'invisible': [('is_sale_associate', '=', True)]}</attribute>-->
+                <!--</page>-->
+
+                <!--change vat(TIN) to KRA and make required for vendors-->
+                <field name="vat" position="attributes">
+                    <attribute name="string">KRA PIN</attribute>
+                    <attribute name="attrs">{'required': [('supplier', '=', True)]}</attribute>
+                </field>
+
+            </field>
+        </record>
+
+        <!-- Lock down Pricelist (property_product_pricelist) -->
+        <record model="ir.ui.view" id="view_partner_property_form_lockdown">
+            <field name="name">res.partner.product.property.form.lockdown</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="product.view_partner_property_form"/>
+            <field name="arch" type="xml">
+
+                <field name="property_product_pricelist" position="attributes">
+                    <attribute name="options">{'no_create': True}</attribute>
+                    <!--<attribute name="attrs">{'invisible': ['|', ('is_agent', '=', False), ('is_company','=',False),('parent_id','!=',False)]}</attribute>-->
+                    <attribute name="attrs">{'invisible': [('is_agent', '=', False)], 'required':
+                        [('can_purchase','=',True),('partner_type','=','agent')]}
+                    </attribute>
+                </field>
+
+
+                <!--Lockdown Customer and Supplier Payment Terms-->
+                <!--           <field name="property_payment_term_id" position="attributes">
+                               <attribute name="attrs">{'invisible': [('is_agent', '=', False)]}</attribute>
+                           </field>
+
+                           <field name="property_supplier_payment_term_id" position="attributes">
+                               <attribute name="attrs">{'invisible': [('is_agent', '=', False)]}</attribute>
+                           </field>-->
+
+            </field>
+        </record>
+
+
+        <!--agent: filter-->
+        <record id="res_partner_agent_view_filter" model="ir.ui.view">
+            <field name="name">res.partner.agent.view.filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="filter[@name='customer']" position="after">
+                    <filter string="All Agents" name="all_agent"
+                            domain="[('is_agent','=',True), ('parent_id', '=', False), ('active_agent', '=' ,True)]"/>
+                    <filter string="Field Agents" name="agent"
+                            domain="[('agent_type_id', '=', 'Field'), ('parent_id', '=', False),  ('active_agent', '=' ,True)]"/>
+                    <filter string="Chama" name="chama_agent"
+                            domain="[('agent_type_id', '=', 'Chama'), ('parent_id', '=', False), ('active_agent', '=' ,True)]"/>
+                    <filter string="Institutions" name="institution_agent"
+                            domain="[('agent_type_id', '=', 'Institution'), ('parent_id', '=', False), ('active_agent', '=' ,True)]"/>
+                    <filter string="TBCs" name="tbc_agent"
+                            domain="[('agent_type_id', '=', 'TBCs'), ('parent_id', '=', False), ('active_agent', '=' ,True)]"/>
+
+                    <filter string="Deactivated Agents" name="deactive"
+                            domain="[('can_purchase', '=', False), ('partner_type', '=', 'agent'), ('active_agent', '=' ,False)]"/>
+                    <filter string="Deactivated Chamas" name="deactive_chama"
+                            domain="[('can_purchase', '=', False), ('partner_type', '=', 'agent'), ('active_agent', '=' ,False),('agent_type_id', '=', 'Chama')]"/>
+                    <filter string="Deactivated Institutions" name="deactive_insti"
+                            domain="[('can_purchase', '=', False), ('partner_type', '=', 'agent'), ('active_agent', '=' ,False),('agent_type_id', '=', 'Institution')]"/>
+                    <filter string="Deactivated Field" name="deactive_field"
+                            domain="[('can_purchase', '=', False), ('partner_type', '=', 'agent'), ('active_agent', '=' ,False),('agent_type_id', '=', 'Field')]"/>
+                    <filter string="Deactivated Tbcs" name="deactive_tbc"
+                            domain="[('can_purchase', '=', False), ('partner_type', '=', 'agent'), ('active_agent', '=' ,False),('agent_type_id', '=', 'TBCs')]"/>
+
+                </xpath>
+
+                <field name="name" position="after">
+                    <field name="name" string="Phone"
+                           filter_domain="['|','|',('phone','ilike',self),('mobile','ilike',self),('name','ilike',self)]"/>
+                </field>
+
+                <filter name="salesperson" position="attributes">
+                    <attribute name="string">Sales Person</attribute>
+                    <attribute name="context">{'group_by' : 'sale_associate_id'}</attribute>
+                </filter>
+            </field>
+        </record>
+
+        <!--res.partner  (kanban, tree,form): action-->
+        <record id="action_partner_form" model="ir.actions.act_window">
+            <field name="name">Partner</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'search_default_all_agent':1}</field>
+            <field name="search_view_id" ref="res_partner_agent_view_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to add an Agent or Customer.
+                </p>
+                <p>
+                    Odoo helps you easily track all activities related to
+                    a Customer or an Agent: sales, discussions, history of business opportunities,
+                    documents, etc.
+                </p>
+            </field>
+        </record>
+
+        <!--res.partner.data: form-->
+        <record id="res_partner_data_view_form" model="ir.ui.view">
+            <field name="name">res.partner.data.form</field>
+            <field name="model">res.partner.data</field>
+            <field name="arch" type="xml">
+                <form string="Partner Data">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_toggle_can_earn_commission" type="object"
+                                    attrs="{'invisible': [('is_agent', '=', False)]}"
+                                    class="oe_stat_button" icon="fa-archive" groups="sales_team.group_sale_manager">
+                                <field name="can_earn_commission" widget="boolean_button"
+                                       options="{
+                                            'terminology': {
+                                                'string_true': 'Can Earn',
+                                                'hover_true': 'Stop Earning',
+                                                'string_false': 'Cannot Earn',
+                                                'hover_false': 'Start Earning'
+                                            }
+                                        }"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="partner_id"
+                                       attrs="{'readonly': [('partner_id', '!=', False)]}"/>
+                            </h1>
+                        </div>
+                        <group string="Basic Information">
+                            <group>
+                                <!--TODO: Move warehouse_id to copia_stock-->
+                                <field name="warehouse_id"
+                                       attrs="{'invisible':[('is_agent', '=', False)], 'required':[('is_agent', '=', True)]}"
+                                       options="{'no_create': True}"/>
+                                <field name="prepayments_exempted" attrs="{'invisible':[('is_agent', '=', False)]}"/>
+                            </group>
+                            <group>
+                                <field name="alternate_contact_name" string="Alt. Contact Name"
+                                       attrs="{'required':[('is_agent', '=', True)]}"/>
+                                <field name="alternate_contact_phone" string="Alt. Contact Phone"
+                                       attrs="{'required':[('is_agent', '=', True)]}"/>
+                                <field name="partner_dob"/>
+                                <field name="company_type" invisible="True"/>
+                                <field name="is_agent" invisible="True"/>
+                                <field name="is_sale_associate" invisible="True"/>
+                            </group>
+                        </group>
+                        <group string="Additional Information">
+                            <group>
+                                <field name="id_number" attrs="{'required':[('is_agent', '=', True)]}"/>
+                                <field name="job_position"/>
+                                <field name="agent_photo" attrs="{'invisible':[('is_agent', '=', False)]}"/>
+                                <field name="kra_pin"/>
+                                <field name="till_number" attrs="{'invisible':[('is_agent', '=', False)]}"/>
+
+                            </group>
+                            <group>
+                                <field name="phone_type"/>
+                                <field name="pay_per_kilo" attrs="{'invisible':[('company_type', '=', 'person')]}"/>
+                                <field name="orders_per_month" attrs="{'invisible':[('company_type', '=', 'person')]}"/>
+                                <field name="monthly_net_income"/>
+                                <field name="electricty_connection"/>
+                                <field name="social_media_ids" string="Social Media" widget="many2many_checkboxes"/>
+                            </group>
+                        </group>
+                        <separator/>
+                        <group string="Business Information" attrs="{'invisible':[('is_agent', '=', False)]}">
+                            <field name="agent_type_name" invisible='True'/>
+                            <field name="business_name"
+                                   string="Agent Business Name"
+                                   attrs="{'required':[('agent_type_name','=', 'Field')]}"/>
+                            <field name="business_type"
+                                   widget="many2many_tags"
+                                   string="Agent Business Type"
+                                   attrs="{'required':[('agent_type_name','=', 'Field')]}"/>
+
+                            <field name="credit_days"
+                                   attrs="{'required':[('agent_type_name','=', 'Institution')]}"/>
+
+                            <field name="number_of_permanent_workers"
+                                   attrs="{'required':[('agent_type_name','=', 'Institution')]}"/>
+
+                            <field name="number_of_casual_works"
+                                   attrs="{'required':[('agent_type_name','=', 'Institution')]}"/>
+                        </group>
+                        <group string="Individual Information" attrs="{'invisible':[('company_type', '=', 'company')]}">
+                            <field name="customer_age_range"/>
+                            <field name="gender" attrs="{'required':[('is_agent', '=', True)]}"/>
+                            <field name="customer_occupation"/>
+                            <field name="customer_married"/>
+                            <field name="customer_spouse_id" domain="[('id', '!=', partner_id)]"
+                                   attrs="{'invisible':[('customer_married', '!=', 'married')]}"
+                                   options="{'no_create': True}"/>
+                            <field name="customer_spouse_involved"
+                                   attrs="{'invisible':[('customer_married', '!=', 'married')]}"/>
+                            <field name="customer_has_children"/>
+
+                            <field name="no_of_children"
+                                   attrs="{'invisible':[('customer_has_children', '!=', 'Y')]}"/>
+                            <field name="customer_children"
+                                   attrs="{'invisible':[('customer_has_children', '!=', 'Y')]}"/>
+                        </group>
+                        <notebook>
+                            <page string="Geo-Localisation">
+                                <group>
+                                    <group>
+                                        <field name="latitude" attrs="{'required':[('is_agent', '=', True)]}"/>
+                                        <field name="longitude" attrs="{'required':[('is_agent', '=', True)]}"/>
+                                        <field name="geo_code_valid" attrs="{'required':[('is_agent', '=', True)]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="territory_id" string="Sales Territory"/>
+                                        <field name="location_type_id" string="Location Type"
+                                               options="{'no_create': True}"
+                                               attrs="{'required':[('is_agent', '=', True)]}"/>
+                                        <field name="location_id" options="{'no_create': True}"
+                                               attrs="{'required':[('is_agent', '=', True)]}"/>
+                                    </group>
+                                </group>
+                                <label for="directions" string="Directions"/>
+                                <field name="directions" string="Directions" placeholder="Directions to the partner."
+                                       attrs="{'required':[('is_agent', '=', True)]}"/>
+                            </page>
+                            <page string="Chama Members" name="chama_members">
+                                <field name="chama_member_ids"/>
+                            </page>
+                            <page string="Assets">
+                                <field name="asset_ids">
+                                    <tree string="Assets">
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--res.partner.data.children: form-->
+        <record id="res_partner_data_children_view_form" model="ir.ui.view">
+            <field name="name">res.partner.data.children.form</field>
+            <field name="model">res.partner.data.children</field>
+            <field name="arch" type="xml">
+                <form string="Children">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="age"/>
+                            <field name="gender"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--res.partner.data.asset: form-->
+        <record id="res_partner_data_asset_view_form" model="ir.ui.view">
+            <field name="name">res.partner.data.asset.form</field>
+            <field name="model">res.partner.data.asset</field>
+            <field name="arch" type="xml">
+                <form string="Assets">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="quantity"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_agent_type_form" model="ir.ui.view">
+            <field name="name">agent.type.form.view</field>
+            <field name="model">agent.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="split_exempt"/>
+                            <field name="default_sla_days"/>
+                            <field name="account_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_agent_type_tree">
+            <field name="name">agent.type.tree.view</field>
+            <field name="model">agent.type</field>
+            <field name="arch" type="xml">
+                <tree string="Agent Type">
+                    <field name="name"/>
+                    <field name="split_exempt"/>
+                    <field name="default_sla_days"/>
+                    <field name="account_id"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="res_partner_data_children_view">
+            <field name="name">res.partner.data.children.view</field>
+            <field name="model">res.partner.data.children</field>
+            <field name="arch" type="xml">
+                <!--<form>-->
+                <!--<field name="name"/>-->
+                <!--<field name="age"/>-->
+                <!--<field name="gender"/>-->
+                <!--</form>-->
+                <tree string="Children">
+                    <field name="name"/>
+                    <field name="age"/>
+                    <field name="gender"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- action for agent type -->
+        <record model="ir.actions.act_window" id="action_agent_type">
+            <field name="name">Agent Types</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">agent.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_agent_type_tree"/>
+        </record>
+
+        <!--agent.type: Menus-->
+        <menuitem id="menu_res_partner_type_config"
+                  parent="sale.menu_sale_config"
+                  sequence="20"
+                  name="Partner Configuration"/>
+
+        <menuitem id="menu_sale_agents_type"
+                  parent="menu_res_partner_type_config"
+                  action="action_agent_type"/>
+
+        <!--res.partner: menu-->
+        <menuitem id="sale.res_partner_menu"
+                  name="Partner"
+                  action="action_partner_form"
+                  parent="sale.sale_order_menu"
+                  sequence="1" groups="sales_team.group_sale_salesman"/>
+
+    </data>
+</odoo>

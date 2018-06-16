@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+<!--        <record id="res_partner_data_template_view_tree" model="ir.ui.view">
+            <field name="name">res.partner.data.tree.ext</field>
+            <field name="model">res.partner.data</field>
+            <field name="arch" type="xml">
+                <tree string="Partners">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        -->
+
+        <!--partner.county: action-->
+        <record model="ir.actions.act_window" id="action_agent_list_location">
+            <field name="name">Locations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.data</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <!--partner.region: form-->
+        <record id="res_partner_location_view_form" model="ir.ui.view">
+            <field name="name">res.partner.location.form</field>
+            <field name="model">res.partner.location</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button"
+                                    name="get_agents"
+                                    icon="fa-th-list"
+                                    type="object">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="agent_count"/>
+                                    </span>
+                                    <span class="o_stat_text">Agents</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Location name" class="oe_edit_only"/>
+                            <h2>
+                                <field name="name" placeholder="Enter location e.g Kaka house"/>
+                            </h2>
+                        </div>
+                        <group name="first" col="1" string="">
+                            <field name="parent_id"
+                                   placeholder="Choose parent e.g Africa/Kenya/Nairobi City/Westlands/Parklands/Highridge"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--partner.county: tree-->
+        <record id="res_partner_location_view_tree" model="ir.ui.view">
+            <field name="name">res.partner.location.tree</field>
+            <field name="model">res.partner.location</field>
+            <field name="arch" type="xml">
+                <tree string="Partner Locations">
+                    <field name="display_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--partner.county: action-->
+        <record model="ir.actions.act_window" id="action_res_partner_location">
+            <field name="name">Locations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.location</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="res_partner_location_view_tree"/>
+        </record>
+
+        <!--partner.county: menu-->
+        <menuitem id="menu_res_partner_county"
+                  parent="menu_res_partner_location_config"
+                  action="action_res_partner_location"
+                  sequence="1"
+                  name="Partner Locations"/>
+
+    </data>
+</odoo>
